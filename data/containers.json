@@ -6,7 +6,7 @@
         "LONGITUDE":"5.7432566",
         "FRACTION":"Restavfall",
         "COUNTER":"257",
-        "FILLHEIGHT":"1034",
+        "FILLHEIGHT":"104",
         "DATE":"20240523",
         "TEMPERATURE":"27"
     },
@@ -17,7 +17,7 @@
         "LONGITUDE":"5.7432566",
         "FRACTION":"Papir",
         "COUNTER":"231",
-        "FILLHEIGHT":"20",
+        "FILLHEIGHT":"320",
         "DATE":"20240523",
         "TEMPERATURE":" "
     },
