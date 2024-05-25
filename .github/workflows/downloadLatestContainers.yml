@@ -25,7 +25,5 @@ jobs:
           git config --global user.name 'Hennamann'
           git config --global user.email 'ole@henrikstabell.com'
           git add data/containers.json
-          git commit -m "Daglig oppdatering av Containers.json"
+          git commit -am "Daglig oppdatering av Containers.json"
           git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
