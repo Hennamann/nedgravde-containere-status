@@ -1,0 +1,31 @@
+name: Download latest containers.json
+
+on:
+  schedule:
+    # Runs at 07:00 CEST every day
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+jobs:
+  download_and_commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Delete existing file
+        run: rm -f data/containers.json
+
+      - name: Download file
+        run: curl -o data/containers.json https://opencom.no/dataset/8c10f9c2-d0f1-4ef6-91ac-9094acfe55f7/resource/d8b71643-e845-465b-8403-0e0fe9bcd7de/download/nedgravde_containerer.json
+        
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add data/containers.json
+          git commit -m "Daglig oppdatering av Containers.json"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
