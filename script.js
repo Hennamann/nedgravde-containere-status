@@ -1,6 +1,5 @@
 const url = "./data/containers.json";
 
-// Function to filter out containers older than one month
 function filterRecentContainers(data) {
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
@@ -11,17 +10,14 @@ function filterRecentContainers(data) {
     });
 }
 
-// Function to get unique addresses
 function getUniqueAddresses(data) {
     const addresses = data.map(container => container.ADDRESS);
     return [...new Set(addresses)];
 }
 
-// Function to populate the dropdown list
 function populateDropdown(addresses) {
     const select = document.getElementById('address-select');
 
-    // Sort the addresses alphabetically
     addresses.sort((a, b) => a.localeCompare(b));
 
     addresses.forEach(address => {
@@ -32,7 +28,6 @@ function populateDropdown(addresses) {
     });
 }
 
-// Function to fetch and manipulate the SVG based on fill height
 async function fetchAndModifySvg(fraction, fillHeight) {
     const svgFilename = getSvgFilename(fraction);
     try {
@@ -40,17 +35,14 @@ async function fetchAndModifySvg(fraction, fillHeight) {
         if (!response.ok) throw new Error('Network response was not ok');
         const svgText = await response.text();
 
-        // Create a temporary DOM element to manipulate the SVG
         const parser = new DOMParser();
         const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
         const svgElement = svgDoc.documentElement.cloneNode(true);
 
-        // Adjust the height of the new fill rectangle
         const maxFillHeight = 2500;
-        const adjustedHeight = (fillHeight / maxFillHeight) * 434.34; // assuming 434.34 is the max height
-        const fillYPosition = 251.58 + (434.34 - adjustedHeight); // Adjust y position to simulate fill from bottom
+        const adjustedHeight = (fillHeight / maxFillHeight) * 434.34;
+        const fillYPosition = 251.58 + (434.34 - adjustedHeight);
 
-        // Create a new rectangle for the fill level
         const fillRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
         fillRect.setAttribute('x', '.5');
         fillRect.setAttribute('y', fillYPosition);
@@ -59,21 +51,18 @@ async function fetchAndModifySvg(fraction, fillHeight) {
         fillRect.setAttribute('fill', getFillColor(fraction));
         fillRect.setAttribute('class', 'fill-rect');
 
-        // Create a text element for the fill height
         const fillText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        fillText.setAttribute('x', '10'); // Adjust x position as needed
-        fillText.setAttribute('y', fillYPosition - 5); // Adjust y position to be just above the fill rect
-        fillText.setAttribute('fill', '#000'); // Text color
+        fillText.setAttribute('x', '10');
+        fillText.setAttribute('y', fillYPosition - 5);
+        fillText.setAttribute('fill', '#000');
         fillText.textContent = `Fyllingsgrad: ${fillHeight}`;
 
-        // Find the parent group element
         const garbagebox = svgElement.getElementById('garbagebox');
         if (garbagebox) {
             garbagebox.insertBefore(fillRect, garbagebox.firstChild);
-            garbagebox.insertBefore(fillText, garbagebox.firstChild); // Insert the text element
+            garbagebox.insertBefore(fillText, garbagebox.firstChild);
         }
 
-        // Convert the updated SVG back to a string
         const serializer = new XMLSerializer();
         return serializer.serializeToString(svgElement);
     } catch (error) {
@@ -82,48 +71,52 @@ async function fetchAndModifySvg(fraction, fillHeight) {
     }
 }
 
-// Function to get SVG filename based on fraction
 function getSvgFilename(fraction) {
     switch (fraction.toLowerCase()) {
         case 'papir':
+        case 'papir-næring':
             return './icons/papir.svg';
         case 'bio':
+        case 'bio-næring':
             return './icons/bio.svg';
         case 'restavfall':
+        case 'rest-næring':
             return './icons/restavfall.svg';
         case 'glass/metall':
+        case 'glass/metall-næring':
             return './icons/metall.svg';
         default:
             return '';
     }
 }
 
-// Function to determine fill color based on fraction type
 function getFillColor(fraction) {
     switch (fraction.toLowerCase()) {
         case 'papir':
+        case 'papir-næring':
             return '#326431';
         case 'bio':
+        case 'bio-næring':
             return '#635633';
         case 'restavfall':
+        case 'rest-næring':
             return '#1c3664';
         case 'glass/metall':
+        case 'glass/metall-næring':
             return '#c62232';
         default:
             return '#000';
     }
 }
 
-// Function to open coordinates in a new browser tab
 function openCoordinates(latitude, longitude) {
     const url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
     window.open(url, '_blank');
 }
 
-// Function to display containers for the selected address
 async function displayContainers(address, data) {
     const containerDiv = document.getElementById('container-data');
-    containerDiv.innerHTML = ''; // Clear previous data
+    containerDiv.innerHTML = '';
 
     const containers = data.filter(container => container.ADDRESS === address);
     for (const container of containers) {
@@ -144,9 +137,8 @@ async function displayContainers(address, data) {
     }
 }
 
-// Function to calculate distance between two points using Haversine formula
 function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Radius of the earth in km
+    const R = 6371;
     const dLat = deg2rad(lat2 - lat1);
     const dLon = deg2rad(lon2 - lon1);
     const a =
@@ -154,7 +146,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
         Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const d = R * c; // Distance in km
+    const d = R * c;
     return d;
 }
 
@@ -162,7 +154,6 @@ function deg2rad(deg) {
     return deg * (Math.PI / 180)
 }
 
-// Function to get user's current location
 function getUserLocation() {
     return new Promise((resolve, reject) => {
         if (navigator.geolocation) {
@@ -179,7 +170,6 @@ function getUserLocation() {
     });
 }
 
-// Function to find the closest address to user's location
 function findClosestAddress(userLat, userLon, data) {
     let closestAddress;
     let minDistance = Infinity;
@@ -195,7 +185,60 @@ function findClosestAddress(userLat, userLon, data) {
     return closestAddress;
 }
 
-// Main execution
+async function fetchLastCommitTimestamp() {
+    const repoOwner = 'hennamann';
+    const repoName = 'nedgravde-containere-status';
+    const commitMessage = 'Daglig oppdatering av Containers.json';
+
+    try {
+        const response = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/commits`);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const commits = await response.json();
+
+        const commit = commits.find(commit => commit.commit.message === commitMessage);
+        if (!commit) throw new Error('Commit not found');
+
+        const timestamp = new Date(commit.commit.author.date);
+        return timestamp.toLocaleString();
+    } catch (error) {
+        console.error('Error fetching commit timestamp:', error);
+        return 'Unknown';
+    }
+}
+
+async function updateLastCommitTimestamp() {
+    const timestampField = document.getElementById('last-commit-timestamp');
+    if (!timestampField) return;
+
+    const timestamp = await fetchLastCommitTimestamp();
+    timestampField.textContent = `Data sist oppdatert: ${timestamp}`;
+}
+
+function calculateTimeUntilNextUpdate() {
+    const now = new Date();
+    const nextUpdate = new Date(now);
+    nextUpdate.setUTCHours(5, 0, 0, 0);
+
+    if (now.getUTCHours() >= 5) {
+        nextUpdate.setDate(nextUpdate.getDate() + 1);
+    }
+
+    const timeUntilUpdate = nextUpdate - now;
+    const hoursUntilUpdate = Math.ceil(timeUntilUpdate / (1000 * 60 * 60));
+
+    return hoursUntilUpdate;
+}
+function updateNextUpdateText() {
+    const nextUpdateField = document.getElementById('next-update');
+    if (!nextUpdateField) return;
+
+    const hoursUntilUpdate = calculateTimeUntilNextUpdate();
+    nextUpdateField.textContent = `Data vil bli oppdatert igjen om rundt: ${hoursUntilUpdate} timer`;
+}
+
+updateLastCommitTimestamp();
+updateNextUpdateText();
+
 document.addEventListener('DOMContentLoaded', async () => {
     const loadingSpinner = document.getElementById('loading-spinner');
 
@@ -207,10 +250,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             populateDropdown(uniqueAddresses);
 
-            // Show loading spinner
             loadingSpinner.style.display = 'block';
 
-            // Get user's current location
             try {
                 const userLocation = await getUserLocation();
                 const closestAddress = findClosestAddress(userLocation.latitude, userLocation.longitude, recentContainers);
@@ -219,7 +260,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 displayContainers(closestAddress, recentContainers);
             } catch (error) {
                 console.error('Error getting user location:', error);
-                // Fallback to the first address if user's location cannot be retrieved
                 if (uniqueAddresses.length > 0) {
                     const select = document.getElementById('address-select');
                     select.value = uniqueAddresses[0];
@@ -232,21 +272,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 displayContainers(event.target.value, recentContainers);
             });
 
-            // Initialize Select2
             $('#address-select').select2();
 
-            // Event listener for dropdown change
             $('#address-select').on('change', function () {
-                const selectedAddress = $(this).val(); // Get the selected value
+                const selectedAddress = $(this).val();
                 displayContainers(selectedAddress, recentContainers);
             });
 
-            // Hide loading spinner
             loadingSpinner.style.display = 'none';
         })
         .catch(error => {
             console.error('Error fetching data:', error);
-            // Hide loading spinner in case of error
             loadingSpinner.style.display = 'none';
         });
 });
