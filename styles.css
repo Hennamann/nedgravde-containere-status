@@ -9,16 +9,17 @@ body {
     min-height: 100vh;
 }
 
-.temperature::after {
-    content: "°C";
-}
-
-.container-header {
-    text-align: center;
+.container-header,
+footer {
+    width: 100%;
+    box-sizing: border-box;
     padding: 20px;
     background: #4CAF50;
     color: white;
+    text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 0;
+    /* Ensures no margin is causing gaps */
 }
 
 h1 {
@@ -38,6 +39,7 @@ select {
     border: none;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Ensure full width on mobile */
 }
 
 #container-data {
@@ -54,7 +56,6 @@ select {
     margin: 10px;
     box-sizing: border-box;
     flex: 1 1 45%;
-    /* 2 items per row by default */
     max-width: 45%;
     background: white;
     border-radius: 5px;
@@ -79,25 +80,18 @@ select {
     height: auto;
 }
 
-footer {
-    text-align: center;
-    padding: 20px;
-    background-color: #4CAF50;
-    color: white;
-    margin-top: auto;
-    /* Push footer to the bottom of the page */
+footer p {
+    margin: 5px 0;
 }
 
 footer a {
     color: #D4E157;
-    /* Custom color for the links */
     text-decoration: none;
 }
 
 .spinner {
     display: none;
     position: fixed;
-    /* Fixed positioning */
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -126,7 +120,6 @@ footer a {
 @media (max-width: 1024px) {
     .container {
         flex: 1 1 45%;
-        /* 2 items per row for large tablets */
         max-width: 45%;
     }
 
@@ -138,7 +131,6 @@ footer a {
 @media (max-width: 768px) {
     .container {
         flex: 1 1 90%;
-        /* 1 item per row for tablets */
         max-width: 90%;
     }
 
@@ -149,6 +141,11 @@ footer a {
 
 @media (max-width: 480px) {
     body {
+        padding: 10px;
+    }
+
+    .container-header,
+    footer {
         padding: 10px;
     }
 
@@ -164,7 +161,6 @@ footer a {
 
     .container {
         flex: 1 1 100%;
-        /* 1 item per row for mobile */
         max-width: 100%;
         padding: 10px;
         margin: 10px 0;
